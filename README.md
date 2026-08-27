@@ -160,7 +160,7 @@ Now if you open up `http://localhost:5173/` You should see the home page and tha
 
 ## Deployment
 
-### Live site: [You can visit here](https://bricked-lemons-private.vercel.app/)
+### Live site: [You can visit here](https://30907150100496-shop-sphere.vercel.app/)
 
 ### Platforms used:
 
@@ -178,23 +178,7 @@ Same as account in `backend/.example.env`
 ### Health Check
 If deployment is healthy `/api/health` gives `{"message":"Healthy","status":200}`
 
-Monitor uptime at our [Uptime Robot Status Page](https://stats.uptimerobot.com/ZukRS11UDH)
-
-## AI usage
-
-AI was usage was limited to only helping debugging and wasn't used majorly at all **Except** for the following:
-
-1. Writing tests at `backend/src/tests/` for integration and unit tests
-1. Helped majorly in `backend/endpoint.sh`
-1. Making the helper function `frontend/src/util/pageSelectorHelper.ts`
-1. Helped write the monstrosity that is `Lines 11-13` at `backend/Dockerfile`
-1. Seed data for PostgreSQL database at `backend/prisma/postgres/seed.ts`
-1. Writing the `vercel.json` for vercel deployment
-1. Helped a lot in making of the `handleStripeWebhook` at `backend/src/controllers/webhookControllers` (Only web hook logic not order creation logic)
-1. Writing 2 Small prisma calls in `backend/src/controller/checkoutControllers/createCheckoutSession` around `Line 32` for making a stripeCustomerId
-1. Writing a small dropdown without styling at `frontend/src/components/Navbar` around `Line 64`
-1. The CI/CD pipeline at `.github/workflows/ci.yml`
-1. The `k8s/` and `deploy.sh`
+Monitor uptime at our [Uptime Robot Status Page](https://stats.uptimerobot.com/pGVMtU2Jtu)
 
 ### Any borrowed code has it's sources stated clearly above it
 

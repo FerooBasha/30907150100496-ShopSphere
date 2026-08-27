@@ -14,7 +14,7 @@
 			"buildCommand": "npm run generate"
 		},
 		"cron": {
-			"root": "cron"
+			"root": "backend/cron"
 		}
 	},
 	"rewrites": [

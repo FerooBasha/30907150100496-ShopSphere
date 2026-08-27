@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { PrismaClient as PostgresClient } from '../../src/generated/prisma-postgres';
+import { PrismaClient as PostgresClient } from '../../../backend/src/generated/prisma-postgres';
 import { MongoClient } from 'mongodb';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

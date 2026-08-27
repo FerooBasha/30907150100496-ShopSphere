@@ -1,5 +1,5 @@
 # Bricked Lemons
-
+<!--  -->
 ## Introduction
 
 **Bricked Lemons** is a website about a non-existent company that takes old useless computer parts **(Lemons)** and refurbishes them into fully operation and **premium gaming components** for your next PC build.

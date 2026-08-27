@@ -20,7 +20,7 @@ interface fetchReviewsParams {
 
 async function fetchProducts(params: fetchReviewsParams) {
 	const { id, ...body } = params;
-	const res = await api.get(`/products/${id}/rating`, { params: body });
+	const res = await api.get(`/reviews/${id}`, { params: body });
 	return res.data;
 }
 
@@ -36,7 +36,7 @@ export function useProducts(params: fetchReviewsParams) {
 async function createReview(params: CreateReviewParams) {
 	const { id, ...body } = params;
 
-	const { data } = await api.post(`/products/${id}/rating`, body);
+	const { data } = await api.post(`/reviews/${id}`, body);
 
 	return data;
 }

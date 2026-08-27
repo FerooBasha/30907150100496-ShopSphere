@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (lint, typecheck, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+        env:
+          # Add any VITE_* build-time vars the frontend needs here, pulled from repo/environment secrets.
+          # Vercel's own build injects real values at deploy time — this is only to make sure `vite build` succeeds in CI.
+          VITE_API_URL: https://placeholder.example.com
+
+  backend:
+    name: Backend (unit tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma clients
+        run: npm run generate
+
+      - name: Run unit tests
+        run: npm test -- --testPathIgnorePatterns=integration
+        # Integration tests are intentionally excluded here since they require a live
+        # Postgres + MongoDB with `.env.test`. Add service containers below if/when you
+        # want integration tests running in CI too.
+
+  # This job exists purely so you can mark ONE required status check ("CI Passed")
+  # in branch protection / Vercel deployment protection instead of listing each job.
+  ci-passed:
+    name: CI Passed
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "All checks passed"

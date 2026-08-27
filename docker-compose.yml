@@ -1,0 +1,85 @@
+name: Bricked-Lemons
+
+services:
+  postgres:
+    image: postgres:18
+    container_name: postgres_db
+    restart: always
+    environment:
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=dev
+      - POSTGRES_DB=bricked_lemons_db
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d bricked_lemons_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    build: 
+      context: ./mongodb_rs
+      args:
+        - MONGO_VERSION=8.3.4
+    restart: always
+    container_name: mongo_db
+    environment:
+      - MONGO_REPLICA_HOST=localhost
+      - MONGO_REPLICA_PORT=27017
+      - MONGO_INITDB_ROOT_USERNAME=dev
+      - MONGO_INITDB_ROOT_PASSWORD=dev
+      - MONGO_INITDB_DATABASE=bricked_lemons_db
+      - MONGO_COMMAND=mongosh
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand({ ping: 1 })"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+    # Because Healthcheck causes log spam:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env
+    volumes:
+      - "./backend:/backend"
+      - "backend_node_modules:/backend/node_modules"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - "./frontend:/frontend"
+      - "frontend_node_modules:/frontend/node_modules"
+
+volumes:
+  backend_node_modules:
+  frontend_node_modules:

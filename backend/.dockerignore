@@ -1,0 +1,14 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# build folders
+build
+dist
+
+# Keep environment variables out of docker
+.env*
+
+# Generated
+generated
+migrations

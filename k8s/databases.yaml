@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+type: Opaque
+stringData:
+  POSTGRES_USER: dev
+  POSTGRES_PASSWORD: dev
+  POSTGRES_DB: bricked_lemons_db
+  MONGO_INITDB_ROOT_USERNAME: dev
+  MONGO_INITDB_ROOT_PASSWORD: dev
+  MONGO_INITDB_DATABASE: bricked_lemons_db
+---
+# POSTGRES
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  resources: { requests: { storage: 1Gi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: postgres }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: postgres } }
+  template:
+    metadata: { labels: { app: postgres } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18
+          ports: [ { containerPort: 5432 } ]
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_USER } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_PASSWORD } }
+            - name: POSTGRES_DB
+              valueFrom: { secretKeyRef: { name: db-credentials, key: POSTGRES_DB } }
+          volumeMounts: [ { name: postgres-storage, mountPath: /var/lib/postgresql/data } ]
+          readinessProbe:
+            exec: { command: [ "pg_isready", "-U", "dev", "-d", "bricked_lemons_db" ] }
+            initialDelaySeconds: 10
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim: { claimName: postgres-pvc }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: postgres }
+spec:
+  selector: { app: postgres }
+  ports: [ { port: 5432, targetPort: 5432 } ]
+---
+# MONGODB REPLICA SET
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: { name: mongo-pvc }
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  resources: { requests: { storage: 1Gi } }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: mongo }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: mongo } }
+  template:
+    metadata: { labels: { app: mongo } }
+    spec:
+      containers:
+        - name: mongo
+          image: bricked-lemons/mongo-rs:latest
+          imagePullPolicy: IfNotPresent
+          ports: [ { containerPort: 27017 } ]
+          env:
+            # CRITICAL: Must use the K8s service name 'mongo' so the replica set registers the correct host
+            - name: MONGO_REPLICA_HOST
+              value: "mongo"
+            - name: MONGO_REPLICA_PORT
+              value: "27017"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom: { secretKeyRef: { name: db-credentials, key: MONGO_INITDB_ROOT_USERNAME } }
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom: { secretKeyRef: { name: db-credentials, key: MONGO_INITDB_ROOT_PASSWORD } }
+            - name: MONGO_INITDB_DATABASE
+              valueFrom: { secretKeyRef: { name: db-credentials, key: MONGO_INITDB_DATABASE } }
+            - name: MONGO_COMMAND
+              value: "mongosh"
+          volumeMounts: [ { name: mongo-storage, mountPath: /data/db } ]
+          readinessProbe:
+            exec: { command: [ "mongosh", "--quiet", "--eval", "db.adminCommand('ping')" ] }
+            initialDelaySeconds: 15
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim: { claimName: mongo-pvc }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: mongo }
+spec:
+  selector: { app: mongo }
+  ports: [ { port: 27017, targetPort: 27017 } ]

@@ -132,26 +132,32 @@ Now if you open up `http://localhost:5173/` You should see the home page and tha
 ### Frontend:
 
 - `http://localhost:5173`
-    - `/` The homepage
-    - `/login` For logging into an account
-    - `/register` For creating an account
-    - `/products` For browsing the products
-    - `/products/:id` For for seeing a product info by id
-    - `/cart` For seeing the cart and checking out 
-    - `/profile` For seeing/editing your account info
-    - `/admin` For adding products/making people other accounts admin
-    - `/payment/success` For after completing a payment and creating an order
+  - `/` The homepage
+  - `/login` For logging into an account
+  - `/register` For creating an account
+  - `/products` For browsing the products
+  - `/products/:id` For for seeing a product info by id
+  - `/cart` For seeing the cart and checking out
+  - `/profile` For seeing/editing your account info
+  - `/admin` For adding products/making people other accounts admin
+  - `/payment/success` For after completing a payment and creating an order
 
 ### Backend:
 
 - Express Server: `http://localhost:5000/api` (Port `5000` by default edit at `/backend/.env`)
-    - `/health` For health check
-    - `/products` For creating/getting products
-    - `/auth` For login/registering
-    - `/orders` For creating orders (Deprecated)/getting orders
-    - `/cart` For all the cart operations
-    - `/checkout` For creating a checkout session
-    - `/webhooks` For webhooks
+  - `/health` For health check
+  - `/products` For creating/getting products
+  - `/auth` For login/registering
+  - `/orders` For creating orders (Deprecated)/getting orders
+  - `/cart` For all the cart operations
+  - `/checkout` For creating a checkout session
+  - `/webhooks` For webhooks
+
+#### Review Microservice
+
+- Express Server: `http://localhost:5001/api` you have to use separate express server at: [This Repo](https://github.com/FerooBasha/30907150100496-ShopSphere-ReviewService)
+  - `/reviews/health` For health check
+  - `/reviews/` For creating/getting reviews
 
 #### Docker:
 
@@ -161,6 +167,8 @@ Now if you open up `http://localhost:5173/` You should see the home page and tha
 ## Deployment
 
 ### Live site: [You can visit here](https://30907150100496-shop-sphere.vercel.app/)
+
+#### Review Microservice: [Root API](https://30907150100496-shop-sphere-review-s-murex.vercel.app/api)
 
 ### Platforms used:
 
@@ -176,6 +184,7 @@ Now if you open up `http://localhost:5173/` You should see the home page and tha
 Same as account in `backend/.example.env`
 
 ### Health Check
+
 If deployment is healthy `/api/health` gives `{"message":"Healthy","status":200}`
 
 Monitor uptime at our [Uptime Robot Status Page](https://stats.uptimerobot.com/pGVMtU2Jtu)

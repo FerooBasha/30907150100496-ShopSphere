@@ -8,5 +8,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["*.ts"]
+  "include": ["api/**/*.ts", "api/recalculate-ratings.ts"]
 }

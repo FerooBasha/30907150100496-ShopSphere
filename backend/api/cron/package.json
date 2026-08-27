@@ -1,0 +1,21 @@
+{
+  "name": "cron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "mongodb": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@vercel/node": "^8.1.2",
+    "typescript": "^7.0.2"
+  }
+}

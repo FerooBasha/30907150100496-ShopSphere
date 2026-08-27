@@ -12,9 +12,16 @@
 			"framework": "express",
 			"entrypoint": "src/index.ts",
 			"buildCommand": "npm run generate"
+		},
+		"cron": {
+			"root": "cron"
 		}
 	},
 	"rewrites": [
+		{
+			"source": "/api/cron(/.*)?",
+			"destination": { "type": "service", "service": "cron" }
+		},
 		{
 			"source": "/api(/.*)?",
 			"destination": { "type": "service", "service": "backend" }
@@ -22,6 +29,12 @@
 		{
 			"source": "/(.*)",
 			"destination": { "type": "service", "service": "frontend" }
+		}
+	],
+	"crons": [
+		{
+			"path": "/api/cron/recalculate-ratings",
+			"schedule": "0 3 * * *"
 		}
 	]
 }

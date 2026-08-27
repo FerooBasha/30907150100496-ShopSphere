@@ -19,8 +19,8 @@
 	},
 	"rewrites": [
 		{
-			"source": "/api/cron(/.*)?",
-			"destination": { "type": "service", "service": "cron" }
+			"source": "/api/cron/(.*)",
+			"destination": { "type": "service", "service": "cron", "path": "/$1" }
 		},
 		{
 			"source": "/api(/.*)?",
